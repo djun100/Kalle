@@ -29,9 +29,11 @@ import com.yanzhenjie.kalle.cookie.DBCookieStore;
 import com.yanzhenjie.kalle.sample.config.AppConfig;
 import com.yanzhenjie.kalle.sample.http.JsonConverter;
 import com.yanzhenjie.kalle.sample.http.LoginInterceptor;
+import com.yanzhenjie.kalle.sample.util.LogInterceptor;
 import com.yanzhenjie.kalle.sample.util.Logger;
 import com.yanzhenjie.kalle.sample.util.MediaLoader;
 import com.yanzhenjie.kalle.simple.cache.DiskCacheStore;
+import com.yanzhenjie.kalle.urlconnect.URLConnectionFactory;
 
 /**
  * Created by YanZhenjie on 2018/3/27.
@@ -51,16 +53,21 @@ public class App extends Application {
         }
     }
 
+    /**
+     *
+     */
     public void initialize() {
         AppConfig.get().initFileDir();
 
         Kalle.setConfig(KalleConfig.newBuilder()
+//                .connectFactory(URLConnectionFactory.newBuilder().build())
                 .connectFactory(OkHttpConnectFactory.newBuilder().build())
                 .cookieStore(DBCookieStore.newBuilder(this).build())
                 .cacheStore(DiskCacheStore.newBuilder(AppConfig.get().PATH_APP_CACHE).build())
                 .network(new BroadcastNetwork(this))
                 .addInterceptor(new LoginInterceptor())
-                .addInterceptor(new LoggerInterceptor("KalleSample", BuildConfig.DEBUG))
+//                .addInterceptor(new LoggerInterceptor("KalleSample", BuildConfig.DEBUG))
+                .addInterceptor(new LogInterceptor())
                 .converter(new JsonConverter(this))
                 .build());
 
